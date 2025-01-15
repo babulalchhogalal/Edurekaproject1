@@ -1,0 +1,48 @@
+#Jenkins pipeline code to include the docker image build and push to docker hub
+
+pipeline{
+	
+	agent any
+	
+	tools{
+    	maven 'mymaven'
+	}
+	
+	stages{
+    	stage('Clone Repo')
+    	{
+        	steps{
+            	git 'https://github.com/babulalchhogalal/PGP-FinalProject-1.git'
+        	}
+    	}
+    	stage('Test Code')
+    	{
+        	steps{
+            	sh 'mvn test'
+        	}
+    	}
+    	
+    	stage('Build Code')
+    	{
+        	steps{
+            	sh 'mvn package'
+        	}
+    	}
+    	stage('Build Image')
+    	{
+        	steps{
+            	sh 'docker build -t myproject1:$BUILD_NUMBER .'
+        	}
+    	}
+    	
+    	stage('Push the Image')
+    	{
+        	steps{
+                sh 'docker login -u babulalchhogalal -p Reeeter2091'
+                sh 'docker tag myproject1:$BUILD_NUMBER Babulalchhogalal/myproject1:$BUILD_NUMBER'
+                sh 'docker push babulalchhogalal/myproject1:$BUILD_NUMBER'
+            }
+        }
+        	
+    	}
+    }
